@@ -37,6 +37,7 @@ public class ApiClient {
     public UserList getUserList() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder().GET()
                 .uri(URI.create(url + "/users"))
+                .timeout(Duration.of(timeoutMillis, ChronoUnit.MILLIS))
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         return mapper.readValue(response.body(), UserList.class);
