@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
@@ -44,7 +45,14 @@ public class ApiClient {
         return mapper.readValue(response.body(), UserList.class);
     }
 
-    public User postUser(User user) {
-        return null;
+    public User postUser(User user) throws IOException, InterruptedException {
+        String requestBody = mapper.writeValueAsString(user);
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
+                .uri(URI.create(url + "/users"))
+                .timeout(Duration.of(timeoutMillis, ChronoUnit.MILLIS))
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        return mapper.readValue(response.body(), User.class);
     }
 }
