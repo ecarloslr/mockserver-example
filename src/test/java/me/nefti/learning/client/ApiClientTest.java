@@ -15,6 +15,7 @@ import static org.mockserver.model.JsonBody.json;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -63,6 +64,22 @@ class ApiClientTest {
                 matchesUser("xU345m12", "john.connor", 1678492800),
                 matchesUser("yZ452p56", "james.murphy", 1670630400))
         );
+    }
+
+    @Test
+    void testGetUserList_EmptyList() throws Exception {
+        ApiClient apiClient = new ApiClient("http://localhost:" + mockServerClient.getPort(), 2_000);
+        mockServerClient.when(request("/users")
+                        .withMethod("GET")
+                        .withBody(""))
+                .respond(response()
+                        .withBody(fromResource("/json/getUserList_EmptyList_Response.json")));
+
+        UserList users = apiClient.getUserList();
+
+        assertThat(users, is(notNullValue()));
+        assertThat(users.getUsers(), is(notNullValue()));
+        assertThat(users.getUsers(), is(Matchers.emptyCollectionOf(User.class)));
     }
 
     @Test
