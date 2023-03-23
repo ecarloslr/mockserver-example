@@ -1,6 +1,7 @@
 package me.nefti.learning.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import me.nefti.learning.client.model.UserList;
 
 import java.io.IOException;
@@ -22,7 +23,8 @@ public class ApiClient {
 
     private final HttpClient httpClient;
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
 
     public ApiClient(String serviceUrl, int timeoutMillis) {
         this.url = serviceUrl;
