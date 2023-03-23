@@ -2,6 +2,7 @@ package me.nefti.learning.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import me.nefti.learning.client.model.User;
 import me.nefti.learning.client.model.UserList;
 
 import java.io.IOException;
@@ -41,5 +42,9 @@ public class ApiClient {
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         return mapper.readValue(response.body(), UserList.class);
+    }
+
+    public User postUser(User user) {
+        return null;
     }
 }

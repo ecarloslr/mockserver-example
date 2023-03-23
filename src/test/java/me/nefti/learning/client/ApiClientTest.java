@@ -22,8 +22,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.junit.jupiter.MockServerExtension;
 import org.mockserver.model.BinaryBody;
+import org.mockserver.model.JsonBody;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
@@ -73,8 +76,30 @@ class ApiClientTest {
         });
     }
 
+    @Test
+    void testPostUser() throws Exception {
+        ApiClient apiClient = new ApiClient("http://localhost:" + mockServerClient.getPort(), 2_000);
+        mockServerClient.when(request("/users")
+                        .withMethod("POST")
+                        .withBody(fromJsonResource("/json/postUser_Request.json", StandardCharsets.UTF_8)))
+                .respond(response()
+                        .withBody(fromResource("/json/postUser_Response.json")));
+
+        User user = new User();
+        user.setUsername("john.connor");
+        User createdUser = apiClient.postUser(user);
+
+        assertThat(createdUser, is(notNullValue()));
+        assertThat(createdUser, matchesUser("vU345m15", "john.connor", 1678492860));
+    }
+
     private BinaryBody fromResource(String resource) throws IOException {
         return binary(this.getClass().getResourceAsStream(resource).readAllBytes());
+    }
+
+    private JsonBody fromJsonResource(String resource, Charset charset) throws IOException {
+        byte[] bytes = this.getClass().getResourceAsStream(resource).readAllBytes();
+        return json(new String(bytes, charset), charset);
     }
 
     private Matcher<User> matchesUser(String uniqueId, String username, long timestamp) {
