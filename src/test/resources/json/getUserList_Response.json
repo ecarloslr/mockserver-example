@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "uniqueId": "xU345m12",
+      "username": "john.connor",
+      "registeredSince": 1678492800
+    },
+    {
+      "uniqueId": "yZ452p56",
+      "username": "james.murphy",
+      "registeredSince": 1670630400
+    }
+  ]
+}
