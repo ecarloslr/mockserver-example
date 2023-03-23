@@ -16,6 +16,7 @@ import static org.mockserver.model.JsonBody.json;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +41,10 @@ class ApiClientTest {
         this.mockServerClient = mockServerClient;
     }
 
+    @AfterEach
+    void tearDown() {
+        this.mockServerClient.reset();
+    }
 
     @Test
     void testGetUserList() throws Exception {
