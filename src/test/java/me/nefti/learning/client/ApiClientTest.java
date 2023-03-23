@@ -6,7 +6,9 @@ import me.nefti.learning.client.model.UserList;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.contains;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockserver.model.BinaryBody.binary;
+import static org.mockserver.model.Delay.delay;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 import static org.mockserver.model.JsonBody.json;
@@ -15,6 +17,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.junit.jupiter.MockServerExtension;
@@ -22,6 +25,7 @@ import org.mockserver.model.BinaryBody;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.concurrent.TimeUnit;
 
 @ExtendWith(MockServerExtension.class)
 // @MockServerSettings(ports = {8080})
@@ -51,6 +55,22 @@ class ApiClientTest {
                 matchesUser("xU345m12", "john.connor", 1678492800),
                 matchesUser("yZ452p56", "james.murphy", 1670630400))
         );
+    }
+
+    @Test
+    @Timeout(value = 3_000, unit = TimeUnit.MILLISECONDS)
+    void testGetUserList_Timeout() throws Exception {
+        ApiClient apiClient = new ApiClient("http://localhost:" + mockServerClient.getPort(), 2_000);
+        mockServerClient.when(request("/users")
+                        .withMethod("GET")
+                        .withBody(""))
+                .respond(response()
+                        .withDelay(delay(TimeUnit.MILLISECONDS, 5_000))
+                        .withBody(fromResource("/json/getUserList_Response.json")));
+
+        assertThrows(IOException.class, () -> {
+            apiClient.getUserList();
+        });
     }
 
     private BinaryBody fromResource(String resource) throws IOException {
