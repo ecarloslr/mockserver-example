@@ -1,5 +1,6 @@
 package me.nefti.learning.client;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.junit.jupiter.MockServerExtension;
@@ -8,11 +9,17 @@ import org.mockserver.junit.jupiter.MockServerExtension;
 // @MockServerSettings(ports = {8080})
 class ApiClientTest {
 
-    private final ClientAndServer client;
+    private final ClientAndServer mockServerClient;
 
-    public ApiClientTest(ClientAndServer client) {
-        this.client = client;
+    public ApiClientTest(ClientAndServer mockServerClient) {
+        this.mockServerClient = mockServerClient;
     }
 
 
+    @Test
+    void testGetUserList() throws Exception {
+
+    }
+
+   
 }
